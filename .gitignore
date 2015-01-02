@@ -1,0 +1,8 @@
+# ignore packages installed by npm
+node_modules
+
+#backup
+*~
+
+#others
+.DS_Store

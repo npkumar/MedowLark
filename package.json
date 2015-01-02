@@ -1,0 +1,15 @@
+{
+  "name": "meadowlark",
+  "version": "1.0.0",
+  "description": "\"KickAss App in the making\"",
+  "main": "meadowlark.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.10.6",
+    "express3-handlebars": "^0.5.2"
+  }
+}
