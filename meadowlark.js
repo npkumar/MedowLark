@@ -18,6 +18,24 @@ app.use(function(req, res, next) {
 	next();
 });
 
+function getWeatherData() {
+	return {
+		locations: [{
+			name: 'Portland',
+			forecastUrl: 'http://www.wunderground.com/US/OR/Portland.html',
+			iconUrl: 'http://icons-ak.wxug.com/i/c/k/cloudy.gif',
+			weather: 'Overcast',
+			temp: '54.1 F (12.3 C)',
+		}]
+	};
+}
+
+app.use(function(req, res, next) {
+	if (!res.locals.partials) res.locals.partials = {};
+	res.locals.partials.weather = getWeatherData();
+	next();
+});
+
 app.get('/', function(req, res) {
 	res.render('home');
 });
@@ -43,6 +61,7 @@ app.get('/tours/request-group-rate', function(req, res) {
 
 //custom 404 page
 app.use(function(req, res) {
+	console.log('404')
 	res.status(404);
 	res.render('404');
 });
