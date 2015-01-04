@@ -70,6 +70,19 @@ app.get('/tours/request-group-rate', function(req, res) {
 	res.render('tours/request-group-rate');
 });
 
+app.get('/rhyme', function(req, res) {
+	res.render('rhyme');
+});
+
+app.get('/data/rhyme', function(req, res) {
+	res.json({
+		animal: 'squirrel',
+		bodyPart: 'tail',
+		adjective: 'bushy',
+		noun: 'heck',
+	});
+});
+
 //custom 404 page
 app.use(function(req, res) {
 	console.log('404')
