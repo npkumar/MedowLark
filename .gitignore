@@ -6,3 +6,6 @@ node_modules
 
 #others
 .DS_Store
+
+#credentials
+credentials.js
