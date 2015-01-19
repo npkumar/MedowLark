@@ -1,5 +1,6 @@
 var express = require('express');
 var formidable = require('formidable');
+var http = require('http');
 var fortune = require('./lib/fortune.js');
 var credentials = require('./credentials.js');
 
@@ -31,6 +32,19 @@ app.use(function(req, res, next) {
 app.use(require('cookie-parser')(credentials.cookieSecret));
 app.use(require('express-session')());
 
+switch (app.get('env')) {
+	case 'development':
+		// compact, colorful dev logging
+		app.use(require('morgan')('dev'));
+		break;
+	case 'production':
+		// module 'express-logger' supports daily log rotation
+		app.use(require('express-logger')({
+			path: __dirname + '/log/requests.log'
+		}));
+		break;
+}
+
 app.use(function(req, res, next) {
 	// if there's a flash message, transfer it to the context, then clear it 
 	res.locals.flash = req.session.flash;
@@ -53,6 +67,13 @@ function getWeatherData() {
 app.use(function(req, res, next) {
 	if (!res.locals.partials) res.locals.partials = {};
 	res.locals.partials.weather = getWeatherData();
+	next();
+});
+
+app.use(function(req, res, next) {
+	var cluster = require('cluster');
+	if (cluster.isWorker) 
+		console.log('Worker %d received request', cluster.worker.id);
 	next();
 });
 
@@ -196,6 +217,22 @@ app.use(function(err, req, res, next) {
 	res.render('500');
 });
 
-app.listen(app.get('port'), function() {
-	console.log('Express started on http://localhost:' + app.get('port') + '; press Ctrl-C to terminate');
-});
+// app.listen(app.get('port'), function() {
+// 	console.log('Express started on http://localhost:' + app.get('port') + '; press Ctrl-C to terminate');
+// });
+
+function startServer() {
+	http.createServer(app).listen(app.get('port'), function() {
+		console.log('Express started in ' + app.get('env') +
+			' mode on http://localhost:' + app.get('port') +
+			'; press Ctrl-C to terminate.');
+	});
+}
+
+if (require.main === module) {
+	// application run directly; start app server 
+	startServer();
+} else {
+	// application imported as a module via "require": export function // to create server
+	module.exports = startServer;
+}
