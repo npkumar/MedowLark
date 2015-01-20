@@ -5,6 +5,48 @@ var fortune = require('./lib/fortune.js');
 var credentials = require('./credentials.js');
 
 var app = express();
+var server = null;
+
+//add everything to a domain
+app.use(function(req, res, next) {
+	// create a domain for this request
+	var domain = require('domain').create(); // handle errors on this domain 
+	domain.on('error', function(err) {
+		console.error('DOMAIN ERROR CAUGHT\n', err.stack);
+		try {
+			// failsafe shutdown in 5 seconds
+			setTimeout(function() {
+				console.error('Failsafe shutdown.');
+				process.exit(1);
+			}, 5000);
+			// disconnect from the cluster
+			var worker = require('cluster').worker;
+			if (worker) worker.disconnect();
+			// stop taking new requests
+			server.close();
+			try {
+				// attempt to use Express error route 
+				next(err);
+			} catch (err) {
+				// if Express error route failed, try
+				// plain Node response
+				console.error('Express error mechanism failed.\n', err.stack);
+				res.statusCode = 500;
+				res.setHeader('content-type', 'text/plain');
+				res.end('Server error.');
+			}
+		} catch (err) {
+			console.error('Unable to send 500 response.\n', err.stack);
+		}
+	});
+	// add the request and response objects to the domain
+	domain.add(req);
+	domain.add(res);
+	// execute the rest of the request chain in the domain
+	domain.run(next);
+	// other middleware and routes go after this middleware
+});
+
 
 //set up handlebars view engine
 var handlebars = require('express3-handlebars').create({
@@ -72,7 +114,7 @@ app.use(function(req, res, next) {
 
 app.use(function(req, res, next) {
 	var cluster = require('cluster');
-	if (cluster.isWorker) 
+	if (cluster.isWorker)
 		console.log('Worker %d received request', cluster.worker.id);
 	next();
 });
@@ -203,6 +245,16 @@ app.post('/contest/vacation-photo/:year/:month', function(req, res) {
 	});
 });
 
+app.get('/fail', function(req, res) {
+	throw new Error('Nope!');
+});
+
+app.get('/epic-fail', function(req, res) {
+	process.nextTick(function() {
+		throw new Error('Kaboom!');
+	});
+});
+
 //custom 404 page
 app.use(function(req, res) {
 	console.log('404')
@@ -222,7 +274,7 @@ app.use(function(err, req, res, next) {
 // });
 
 function startServer() {
-	http.createServer(app).listen(app.get('port'), function() {
+	server = http.createServer(app).listen(app.get('port'), function() {
 		console.log('Express started in ' + app.get('env') +
 			' mode on http://localhost:' + app.get('port') +
 			'; press Ctrl-C to terminate.');
