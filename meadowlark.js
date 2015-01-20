@@ -338,6 +338,26 @@ app.post('/contest/vacation-photo/:year/:month', function(req, res) {
 	});
 });
 
+
+app.get('/vacations', function(req, res) {
+	Vacation.find({
+		available: true
+	}, function(err, vacations) {
+		var context = {
+			vacations: vacations.map(function(vacation) {
+				return {
+					sku: vacation.sku,
+					name: vacation.name,
+					description: vacation.description,
+					price: vacation.getDisplayPrice(),
+					inSeason: vacation.inSeason,
+				}
+			})
+		};
+		res.render('vacations', context);
+	});
+});
+
 app.get('/fail', function(req, res) {
 	throw new Error('Nope!');
 });
