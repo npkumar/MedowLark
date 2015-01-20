@@ -1,11 +1,63 @@
 var express = require('express');
 var formidable = require('formidable');
 var http = require('http');
+var fs = require('fs');
+var mongoose = require('mongoose');
 var fortune = require('./lib/fortune.js');
 var credentials = require('./credentials.js');
+var Vacation = require('./models/vacation.js');
 
 var app = express();
 var server = null;
+
+dbopts = {
+	server: {
+		socketOptions: {
+			keepAlive: 1
+		}
+	}
+};
+switch (app.get('env')) {
+	case 'development':
+		mongoose.connect(credentials.mongo.development.connectionString, dbopts);
+		break;
+	case 'production':
+		mongoose.connect(credentials.mongo.production.connectionString, dbopts);
+		break;
+	default:
+		throw new Error('Unknown execution environment: ' + app.get('env'));
+}
+
+Vacation.find(function(err, vacations) {
+	if (vacations.length) return;
+	new Vacation({
+		name: 'Hood River Day Trip',
+		slug: 'hood-river-day-trip',
+		category: 'Day Trip',
+		sku: 'HR199',
+		description: 'Spend a day sailing on the Columbia and ' +
+			'enjoying craft beers in Hood River!',
+		priceInCents: 9995,
+		tags: ['day trip', 'hood river', 'sailing', 'windsurfing', 'breweries'],
+		inSeason: true,
+		maximumGuests: 16,
+		available: true,
+		packagesSold: 0,
+	}).save();
+	new Vacation({
+		name: 'Oregon Coast Getaway',
+		slug: 'oregon-coast-getaway',
+		category: 'Weekend Getaway',
+		sku: 'OC39',
+		description: 'Enjoy the ocean air and quaint coastal towns!',
+		priceInCents: 269995,
+		tags: ['weekend getaway', 'oregon coast', 'beachcombing'],
+		inSeason: false,
+		maximumGuests: 8,
+		available: true,
+		packagesSold: 0,
+	}).save();
+});
 
 //add everything to a domain
 app.use(function(req, res, next) {
@@ -233,15 +285,56 @@ app.get('/contest/vacation-photo', function(req, res) {
 	});
 });
 
+
+//FS persistence
+//make sure data directory exists
+var dataDir = __dirname + '/data';
+var vacationPhotoDir = dataDir + '/vacation-photo';
+fs.existsSync(dataDir) || fs.mkdirSync(dataDir);
+fs.existsSync(vacationPhotoDir) || fs.mkdirSync(vacationPhotoDir);
+
+function saveContestEntry(contestName, email, year, month, photoPath) {
+	//TODO
+}
+
+// app.post('/contest/vacation-photo/:year/:month', function(req, res) {
+// 	var form = new formidable.IncomingForm();
+// 	form.parse(req, function(err, fields, files) {
+// 		if (err) return res.redirect(303, '/error');
+// 		console.log('received fields:');
+// 		console.log(fields);
+// 		console.log('received files:');
+// 		console.log(files);
+// 		res.redirect(303, '/thank-you');
+// 	});
+// });
+
 app.post('/contest/vacation-photo/:year/:month', function(req, res) {
 	var form = new formidable.IncomingForm();
 	form.parse(req, function(err, fields, files) {
 		if (err) return res.redirect(303, '/error');
-		console.log('received fields:');
-		console.log(fields);
-		console.log('received files:');
-		console.log(files);
-		res.redirect(303, '/thank-you');
+		if (err) {
+			res.session.flash = {
+				type: 'danger',
+				intro: 'Oops!',
+				message: 'There was an error processing your submission. ' +
+					'Pelase try again.',
+			};
+			return res.redirect(303, '/contest/vacation-photo');
+		}
+		var photo = files.photo;
+		var dir = vacationPhotoDir + '/' + Date.now();
+		var path = dir + '/' + photo.name;
+		fs.mkdirSync(dir);
+		fs.renameSync(photo.path, dir + '/' + photo.name);
+		saveContestEntry('vacation-photo', fields.email,
+			req.params.year, req.params.month, path);
+		req.session.flash = {
+			type: 'success',
+			intro: 'Good luck!',
+			message: 'You have been entered into the contest.',
+		};
+		return res.redirect(303, '/contest/vacation-photo/entries');
 	});
 });
 
