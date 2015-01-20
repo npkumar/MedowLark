@@ -15,6 +15,7 @@
     "express-session": "^1.10.1",
     "express3-handlebars": "^0.5.2",
     "formidable": "^1.0.16",
+    "loadtest": "^1.2.6",
     "morgan": "^1.5.1",
     "nodemailer": "0.7.1"
   },
