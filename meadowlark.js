@@ -7,7 +7,7 @@ var http = require('http'),
     vhost = require('vhost'),
     rest = require('connect-rest');
 
-Vacation = require('./models/vacation.js'),
+var Vacation = require('./models/vacation.js'),
     VacationInSeasonListener = require('./models/vacationInSeasonListener.js'),
     Attraction = require('./models/attraction.js');
 
@@ -234,14 +234,15 @@ app.use(function(req, res, next) {
 });
 
 // middleware to handle logo image easter eggs
-// var static = require('./lib/static.js').map;
-// app.use(function(req, res, next){
-// 	var now = new Date();
-// 	res.locals.logoImage = now.getMonth()==11 && now.getDate()==19 ?
-// 	static('/img/logo_bud_clark.png') :
-// 	static('/img/logo.png');
-// 	next();
-// });
+var static = require('./lib/static.js').map;
+
+app.use(function(req, res, next) {
+    var now = new Date();
+    res.locals.logoImage = now.getMonth() == 11 && now.getDate() == 19 ?
+        static('/img/logo_bud_clark.png') :
+        static('/img/logo.png');
+    next();
+});
 
 // middleware to provide cart data for header
 app.use(function(req, res, next) {

@@ -5,7 +5,7 @@
 <head>
 	<!-- Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-
+	<link rel="stylesheet" href="{{static /css/main.css}}">
 	{{#if showTests}}
 		<link rel="stylesheet" href="/vendor/mocha.css"> 
 	{{/if}}
@@ -21,7 +21,8 @@
 </head>
 
 <body>
-	<header><img src="img/logo.jpg" alt="MeadowLark logo" height="100" width="100"></header>
+	<header><img src="{{logoImage}}" alt="Meadowlark Travel Logo"></header>
+	<header><img src="{{static '/img/logo.jpg'}}" alt="MeadowLark logo" height="100" width="100"></header>
 	{{{body}}}
 
 	<script src="http://code.jquery.com/jquery-2.0.2.min.js"></script>
