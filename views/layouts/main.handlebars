@@ -6,6 +6,13 @@
 	<!-- Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
 	<link rel="stylesheet" href="{{static /css/main.css}}">
+	<link rel="stylesheet" href="/css/style.css">
+
+{{!-- 	[if lt IE 9]
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+	  <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script> 
+	[endif] --}}
+
 	{{#if showTests}}
 		<link rel="stylesheet" href="/vendor/mocha.css"> 
 	{{/if}}
@@ -21,10 +28,13 @@
 </head>
 
 <body>
-	<a href="/auth/facebook">Login with Facebook</a>
-	<a href="/auth/google">Sign In with Google</a>
+	<div class="container">
+	<a href="/auth/facebook" class="btn btn-primary">Login with Facebook</a>
+	<a href="/auth/google" class="btn btn-primary">Login with Google</a>
 	<a href="/logout">Logout</a>
-	<header><img src="{{logoImage}}" alt="Meadowlark Travel Logo"></header>
+
+
+{{!-- 	<header><img src="{{logoImage}}" alt="Meadowlark Travel Logo"></header> --}}
 	<header><img src="{{static '/img/logo.jpg'}}" alt="MeadowLark logo" height="100" width="100"></header>
 	{{{body}}}
 
@@ -51,5 +61,6 @@
 			mocha.run();
 		</script>
 	{{/if}}
+	<div>
 </body>
 </html>
