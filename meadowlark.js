@@ -251,19 +251,30 @@ app.use(function(req, res, next) {
     next();
 });
 
-// create "admin" subdomain...this should appear
-// before all your other routes
-var admin = express.Router();
-app.use(require('vhost')('admin.*', admin));
-
-// create admin routes; these can be defined anywhere
-admin.get('/', function(req, res) {
-    res.render('admin/home');
+var auth = require('./lib/auth.js')(app, {
+    providers: credentials.authProviders,
+    successRedirect: '/account',
+    failureRedirect: '/unauthorized',
 });
-admin.get('/users', function(req, res) {
-    res.render('admin/users');
+// auth.init() links in Passport middleware:
+auth.init();
+// now we can specify our auth routes:
+auth.registerRoutes();
+
+
+app.get('/account', function(req, res) {
+    if (!req.session.passport.user)
+        return res.redirect(303, '/unauthorized');
+    res.render('account', {
+        user: req.session.passport.user
+    });
 });
 
+app.get('/logout', function(req, res) {
+    if (req.session.passport.user)
+        req.session.passport.user = null;
+    return res.redirect(303, '/');
+});
 
 // add routes
 require('./routes.js')(app);

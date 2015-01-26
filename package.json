@@ -23,6 +23,9 @@
     "mongoose": "^3.8.21",
     "morgan": "^1.5.1",
     "nodemailer": "0.7.1",
+    "passport": "^0.2.1",
+    "passport-facebook": "^1.0.3",
+    "passport-google": "^0.3.0",
     "session-mongoose": "^0.5.2",
     "underscore": "^1.7.0",
     "vhost": "^3.0.0"
