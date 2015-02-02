@@ -111,7 +111,7 @@ app.use(require('express-session')({
     store: sessionStore
 }));
 app.use(express.static(__dirname + '/public'));
-app.use(require('body-parser')());
+//app.use(require('body-parser')());
 
 // cross origin resource sharing
 app.use(require('cors')());
