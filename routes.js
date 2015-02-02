@@ -4,8 +4,9 @@ var main = require('./handlers/main.js'),
 	//cart = require('./handlers/cart.js'),
 	//cartValidation = require('./lib/cartValidation.js');
 	contact = require('./handlers/contact.js'),
-	samples = require('./handlers/sample.js');
+	samples = require('./handlers/sample.js'),
 	//customerController = require('./controllers/customer.js');
+	chat = require('./handlers/chat.js');
 
 module.exports = function(app){
 
@@ -52,5 +53,8 @@ module.exports = function(app){
 
 	// customer routes
 	//customerController.registerRoutes(app);
+
+	//chat routes
+	app.get('/chat', chat.chat);
 
 };

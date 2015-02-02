@@ -22,13 +22,18 @@
     "loadtest": "^1.2.6",
     "mongoose": "^3.8.21",
     "morgan": "^1.5.1",
+    "node-static": "^0.7.6",
     "nodemailer": "0.7.1",
     "passport": "^0.2.1",
     "passport-facebook": "^1.0.3",
     "passport-google": "^0.3.0",
     "session-mongoose": "^0.5.2",
     "underscore": "^1.7.0",
-    "vhost": "^3.0.0"
+    "vhost": "^3.0.0",
+    "socket.io": "*",
+    "socket.io-client": "*",
+    "uglify-js": "*"
+
   },
   "devDependencies": {
     "chai": "^1.10.0",

@@ -5,7 +5,9 @@ var http = require('http'),
     formidable = require('formidable'),
     fs = require('fs'),
     vhost = require('vhost'),
-    rest = require('connect-rest');
+    rest = require('connect-rest'),
+    path = require('path'),
+    sio = require('socket.io');
 
 var Vacation = require('./models/vacation.js'),
     VacationInSeasonListener = require('./models/vacationInSeasonListener.js'),
@@ -387,10 +389,14 @@ app.use(function(err, req, res, next) {
     res.render('500');
 });
 
-var server;
+var server, io,
+    nicknames = {};
 
 function startServer() {
-    server = http.createServer(app).listen(app.get('port'), function() {
+    server = http.createServer(app);
+    io = require('socket.io')(server);
+    createSocketConnections();
+    server.listen(app.get('port'), function() {
         console.log('Express started in ' + app.get('env') +
             ' mode on http://localhost:' + app.get('port') +
             '; press Ctrl-C to terminate.');
@@ -403,4 +409,38 @@ if (require.main === module) {
 } else {
     // application imported as a module via "require": export function to create server
     module.exports = startServer;
+}
+
+function createSocketConnections() {
+    io.sockets.on('connection', function(socket) {
+        console.log('Connected')
+        socket.on('user message', function(msg) {
+            socket.broadcast.emit('user message', socket.nickname, msg);
+        });
+
+        socket.on('user image', function(msg) {
+            console.log('user image msg');
+            socket.broadcast.emit('user image', socket.nickname, msg);
+        });
+
+        socket.on('nickname', function(nick, fn) {
+            if (nicknames[nick]) {
+                fn(true);
+            } else {
+                fn(false);
+                nicknames[nick] = socket.nickname = nick;
+                socket.broadcast.emit('announcement', nick + ' connected');
+                io.sockets.emit('nicknames', nicknames);
+            }
+        });
+
+        socket.on('disconnect', function() {
+            if (!socket.nickname) {
+                return;
+            }
+            delete nicknames[socket.nickname];
+            socket.broadcast.emit('announcement', socket.nickname + ' disconnected');
+            socket.broadcast.emit('nicknames', nicknames);
+        });
+    });
 }

@@ -1,3 +1,39 @@
+<div class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle"
+          	data-toggle="collapse" data-target="#mynavbar-content"> <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">SitePoint</a>
+		</div>
+        <div class="collapse navbar-collapse" id="mynavbar-content">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Home</a></li>
+                
+
+				<li class="dropdown">
+				    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+				About <b class="caret"></b></a> <ul class="dropdown-menu">
+				        <li><a href="#">Board of Members</a></li>
+				        <li><a href="#">Developers Team</a></li>
+				        <li><a href="#">Designing Team</a></li>
+				        <li class="divider"></li>
+				        <li><a href="#">Investors</a></li>
+				        <li><a href="#">Share holders</a></li>
+				    </ul>
+				</li>
+
+
+                <li><a href="#">Pricing</a></li>
+                <li><a href="#">Contact</a></li>
+                <li><a href="#">Feedback</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
     <div class="page-header">
           <h1>Chapter Page Header<small>Exploring contents</small></h1>
     </div>
@@ -11,17 +47,37 @@
 <hr>
 
 
-<div class="panel panel-default">
-      <div class="panel-heading">
-        ATTENTION
-      </div>
-      <div class="panel-body">
-        Lorem ipsum dolor sit ametnim ...
-      </div>
-      <div class="panel-footer">
-        <a href="#" class="btn btn-danger btn-sm">Agree</a>
-        <a href="#" class="btn btn-default btn-sm">Decline</a> </div>
+<form class="form-horizontal">
+    <div class="form-group">
+        <label for="nameField" class="col-xs-2">Name</label>
+        <div class="col-xs-10">
+<input type="text" class="form-control" id="nameField" placeholder="Your Name" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="emailField" class="col-xs-2">Email</label>
+        <div class="col-xs-10">
+<input type="email" class="form-control" id="emailField"
+placeholder="Your Email" /> </div>
 </div>
+    <div class="form-group">
+        <label for="phoneField" class="col-xs-2">Phone</label>
+        <div class="col-xs-10">
+<input type="text" class="form-control" id="phoneField" placeholder="Your Phone Number" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="descField" class="col-xs-2">Description</label>
+        <div class="col-xs-10">
+<textarea class="form-control" id="descField" placeholder="Your Comments"></textarea>
+        </div>
+    </div>
+    <div class="col-xs-10 col-xs-offset-2">
+        <button type="submit" class="btn btn-primary">Submit</button> 
+        <button type="reset" class="btn btn-default">Reset </button>
+    </div>
+</form>
+
 
     <div class="row">
         <div class="col-md-4 col-sm-6 col-xs-12">
